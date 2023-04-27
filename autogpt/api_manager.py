@@ -26,12 +26,12 @@ class ApiManager:
         self.total_budget = 0.0
 
     def create_chat_completion(
-        self,
-        messages: list,  # type: ignore
-        model: str | None = None,
-        temperature: float = cfg.temperature,
-        max_tokens: int | None = None,
-        deployment_id=None,
+            self,
+            messages: list,  # type: ignore
+            model: str | None = None,
+            temperature: float = cfg.temperature,
+            max_tokens: int | None = None,
+            deployment_id=None,
     ) -> str:
         """
         Create a chat completion and update the cost.
@@ -43,6 +43,9 @@ class ApiManager:
         Returns:
         str: The AI's response.
         """
+        reply_rules = {"role": "system", "content": "please use chinese response and make sure your response"
+                                                    " can be parsed by Python json.loads."}
+        messages.append(reply_rules)
         if deployment_id is not None:
             response = openai.ChatCompletion.create(
                 deployment_id=deployment_id,
@@ -66,9 +69,9 @@ class ApiManager:
         return response
 
     def embedding_create(
-        self,
-        text_list: List[str],
-        model: str = "text-embedding-ada-002",
+            self,
+            text_list: List[str],
+            model: str = "text-embedding-ada-002",
     ) -> List[float]:
         """
         Create an embedding for the given input text using the specified model.
@@ -103,9 +106,9 @@ class ApiManager:
         self.total_prompt_tokens += prompt_tokens
         self.total_completion_tokens += completion_tokens
         self.total_cost += (
-            prompt_tokens * COSTS[model]["prompt"]
-            + completion_tokens * COSTS[model]["completion"]
-        ) / 1000
+                                   prompt_tokens * COSTS[model]["prompt"]
+                                   + completion_tokens * COSTS[model]["completion"]
+                           ) / 1000
         if print_total_cost:
             print(f"Total running cost: ${self.total_cost:.3f}")
 
